@@ -90,7 +90,7 @@ SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
 # JWT
-JWT_SECRET=atlas-super-secret-key
+JWT_SECRET=change-me-to-a-long-random-secret
 JWT_EXPIRY=1h
 MFA_TOKEN_EXPIRY=5m
 ```
