@@ -3,6 +3,12 @@
   publish = "public"
   functions = "netlify/functions"
 
+[build.environment]
+  # These are non-secret config values (not credentials), so exclude them from
+  # Netlify's secret scanner. Real secrets (JWT_SECRET, INTERNAL_SERVICE_KEY,
+  # SUPABASE_SERVICE_ROLE_KEY) are intentionally NOT listed here and remain scanned.
+  SECRETS_SCAN_OMIT_KEYS = "NODE_ENV,PORT,CORS_ORIGINS"
+
 [functions]
   # esbuild bundles the TypeScript function and its imports (the whole src/ tree).
   node_bundler = "esbuild"

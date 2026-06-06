@@ -18,11 +18,11 @@ export const env = {
   supabaseUrl: required('SUPABASE_URL'),
   supabaseServiceRoleKey: required('SUPABASE_SERVICE_ROLE_KEY'),
 
-  jwtSecret: process.env.JWT_SECRET || 'atlas-super-secret-key',
+  jwtSecret: required('JWT_SECRET'),
   jwtExpiry: process.env.JWT_EXPIRY || '1h',
   mfaTokenExpiry: process.env.MFA_TOKEN_EXPIRY || '5m',
 
-  internalServiceKey: process.env.INTERNAL_SERVICE_KEY || 'atlas-internal-service-key',
+  internalServiceKey: required('INTERNAL_SERVICE_KEY'),
 
   corsOrigins: (process.env.CORS_ORIGINS || 'http://localhost:3000')
     .split(',')
