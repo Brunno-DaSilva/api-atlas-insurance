@@ -10,7 +10,7 @@
   },
   "variable": [
     { "key": "baseUrl", "value": "http://localhost:3000" },
-    { "key": "serviceKey", "value": "atlas-internal-service-key" },
+    { "key": "serviceKey", "value": "" },
     { "key": "token", "value": "" },
     { "key": "sessionId", "value": "" },
     { "key": "memberId", "value": "d99489ee-e636-47da-90e2-75a1f51e2037" },
