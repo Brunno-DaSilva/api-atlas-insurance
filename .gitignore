@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+*.log
+.DS_Store
+coverage/
+
+# Environment-specific corporate TLS CA bundle (machine/network specific)
+certs/
+
+# Netlify local state
+.netlify/

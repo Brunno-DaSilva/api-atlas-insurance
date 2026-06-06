@@ -1,0 +1,15 @@
+[build]
+  command = "npm run build"
+  publish = "public"
+  functions = "netlify/functions"
+
+[functions]
+  # esbuild bundles the TypeScript function and its imports (the whole src/ tree).
+  node_bundler = "esbuild"
+
+# All requests that don't match a static file are routed to the Express app.
+# No `force = true`, so static assets in /public (e.g. the landing page) still win.
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200

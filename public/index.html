@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Atlas Insurance Group — Virtual Agent API</title>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 640px; margin: 4rem auto; padding: 0 1rem; line-height: 1.6; color: #1a1a2e; }
+      code { background: #f0f0f5; padding: 0.15rem 0.4rem; border-radius: 4px; }
+      a { color: #0b5cad; }
+      .pill { display: inline-block; background: #e6f4ea; color: #137333; padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.85rem; }
+    </style>
+  </head>
+  <body>
+    <h1>Atlas Insurance Group API</h1>
+    <p class="pill">● API is running</p>
+    <p>RESTful CRUD API backing the Atlas Insurance Cognigy.AI virtual agent.</p>
+    <ul>
+      <li><a href="/health">Health check</a> — <code>GET /health</code></li>
+      <li><a href="/docs">API documentation</a> — Swagger UI</li>
+      <li><a href="/openapi.json">OpenAPI spec</a> — <code>/openapi.json</code></li>
+    </ul>
+    <p>
+      Authenticate via <code>POST /auth/login</code> then <code>POST /auth/verify-mfa</code>,
+      and pass the returned JWT as <code>Authorization: Bearer &lt;token&gt;</code>.
+    </p>
+  </body>
+</html>

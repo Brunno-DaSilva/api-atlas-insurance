@@ -1,0 +1,244 @@
+{
+  "info": {
+    "name": "Atlas Insurance Group API",
+    "description": "Virtual Agent API for Cognigy.AI. Run 'Auth > 1. Login' then 'Auth > 2. Verify MFA' first — the JWT is captured automatically into the {{token}} variable and used by every other request.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "serviceKey", "value": "atlas-internal-service-key" },
+    { "key": "token", "value": "" },
+    { "key": "sessionId", "value": "" },
+    { "key": "memberId", "value": "d99489ee-e636-47da-90e2-75a1f51e2037" },
+    { "key": "policyId", "value": "331d8d69-3f98-4631-bfcb-ae87328be7f6" },
+    { "key": "claimId", "value": "51d377e9-0356-44d5-a4e8-b3c2f93be26b" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "1. Login",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"jane.doe@email.com\",\n  \"password\": \"Password123!\",\n  \"role\": \"member\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) {",
+                  "  pm.collectionVariables.set('sessionId', res.data.sessionId);",
+                  "  console.log('Saved sessionId:', res.data.sessionId);",
+                  "}",
+                  "pm.test('login ok', () => pm.expect(res.success).to.be.true);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2. Verify MFA",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/verify-mfa", "host": ["{{baseUrl}}"], "path": ["auth", "verify-mfa"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"{{sessionId}}\",\n  \"mfaToken\": \"123456\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) {",
+                  "  pm.collectionVariables.set('token', res.data.token);",
+                  "  console.log('Saved JWT to {{token}} — other requests will now authenticate.');",
+                  "}",
+                  "pm.test('mfa verified', () => pm.expect(res.success).to.be.true);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3. Get Session",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/auth/session", "host": ["{{baseUrl}}"], "path": ["auth", "session"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Policies",
+      "item": [
+        {
+          "name": "Get Policy (+ eligibility)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/policies/{{policyId}}", "host": ["{{baseUrl}}"], "path": ["policies", "{{policyId}}"] }
+          }
+        },
+        {
+          "name": "Get Policy Eligibility",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/policies/{{policyId}}/eligibility", "host": ["{{baseUrl}}"], "path": ["policies", "{{policyId}}", "eligibility"] }
+          }
+        },
+        {
+          "name": "List Member Policies",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/members/{{memberId}}/policies?status=active&page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["members", "{{memberId}}", "policies"],
+              "query": [
+                { "key": "status", "value": "active" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Claims",
+      "item": [
+        {
+          "name": "Get Claim",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/claims/{{claimId}}", "host": ["{{baseUrl}}"], "path": ["claims", "{{claimId}}"] }
+          }
+        },
+        {
+          "name": "List Member Claims",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/members/{{memberId}}/claims?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["members", "{{memberId}}", "claims"],
+              "query": [
+                { "key": "status", "value": "", "disabled": true },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Claim (FNOL)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/claims", "host": ["{{baseUrl}}"], "path": ["claims"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"memberId\": \"{{memberId}}\",\n  \"policyId\": \"{{policyId}}\",\n  \"claimType\": \"auto\",\n  \"incidentDate\": \"2024-08-15\",\n  \"incidentDescription\": \"Windshield cracked by road debris on the highway.\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) {",
+                  "  pm.collectionVariables.set('claimId', res.data.id);",
+                  "  console.log('New claim:', res.data.claim_number);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Claim",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/claims/{{claimId}}", "host": ["{{baseUrl}}"], "path": ["claims", "{{claimId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"under_review\",\n  \"adjusterName\": \"Tom Brady\",\n  \"adjusterEmail\": \"tom.brady@atlasins.com\",\n  \"nextAction\": \"Awaiting repair estimate.\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Knowledge",
+      "item": [
+        {
+          "name": "Search",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/knowledge/search", "host": ["{{baseUrl}}"], "path": ["knowledge", "search"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"deductible\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Retrieve",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/knowledge/retrieve", "host": ["{{baseUrl}}"], "path": ["knowledge", "retrieve"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"articleId\": \"PUT-AN-ARTICLE-ID-FROM-SEARCH-HERE\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit",
+      "item": [
+        {
+          "name": "Create Event (service key)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-service-key", "value": "{{serviceKey}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/audit/events", "host": ["{{baseUrl}}"], "path": ["audit", "events"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventType\": \"tool_execution\",\n  \"sessionId\": \"{{sessionId}}\",\n  \"actorId\": \"{{memberId}}\",\n  \"actorType\": \"agent\",\n  \"resourceType\": \"claim\",\n  \"resourceId\": \"{{claimId}}\",\n  \"action\": \"claim.status_checked\",\n  \"payload\": { \"channel\": \"voice\" }\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
